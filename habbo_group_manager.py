@@ -16,7 +16,7 @@ from g_python.hpacket import HPacket
 extension_info = {
     "title": "Enhanced Group Interface",
     "description": "New features to facilitate the user actions",
-    "version": "1.0",
+    "version": "1.1",
     "author": "Max"
 }
 ext = Extension(extension_info, sys.argv)
