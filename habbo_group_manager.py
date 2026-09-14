@@ -416,10 +416,12 @@ def build_member_row(member, row_index, col_index):
     points = [r, 0, w-r, 0, w, r, w, h-r, w-r, h, r, h, 0, h-r, 0, r]
     card.create_polygon(points, fill="#FFFFFF", outline="#000000", width=1)
 
-    var = tk.BooleanVar()
-    checkbox_vars[member["userId"]] = var
-    chk = tk.Checkbutton(card, variable=var, bg="#FFFFFF", activebackground="#FFFFFF", highlightthickness=0)
-    card.create_window(12, 22, window=chk, anchor="w")
+    eff_rank = get_effective_rank()
+    if eff_rank in (RANK_OWNER, RANK_ADMIN):
+        var = tk.BooleanVar()
+        checkbox_vars[member["userId"]] = var
+        chk = tk.Checkbutton(card, variable=var, bg="#FFFFFF", activebackground="#FFFFFF", highlightthickness=0)
+        card.create_window(12, 22, window=chk, anchor="w")
 
     photo = get_avatar_photo(member["look"], member.get("avatar_bytes"))
     if photo is not None:
@@ -666,6 +668,7 @@ def on_guild_members(message):
         if current_guild_id != parsed_guild_id:
             current_guild_id = parsed_guild_id
             my_rank_in_current_guild = None
+            window.after(0, lambda: badge_canvas.itemconfig(badge_image_on_canvas, image=''))
 
         p.read_string(encoding="utf-8")
         p.read_int()
@@ -698,9 +701,25 @@ def on_guild_members(message):
             traceback.print_exc()
             break
 
+    try:
+        is_admin = p.read_bool()
+        page_size = p.read_int()
+        page_index = p.read_int()
+        search_type = p.read_int()
+    except Exception as e:
+        print(f"[Extension] Alert - Footer parser error: {e}")
+        is_admin = False
+        search_type = 0
+
     my_entry = next((m for m in members if m["username"] == MY_USERNAME), None)
+    
     if my_entry is not None:
         my_rank_in_current_guild = my_entry["rank"]
+    elif my_rank_in_current_guild is None or my_rank_in_current_guild == RANK_MEMBER:
+        if is_admin or search_type == 2:
+            my_rank_in_current_guild = RANK_ADMIN
+        else:
+            my_rank_in_current_guild = RANK_MEMBER
 
     if bulk_mode is not None:
         handle_bulk_step(members)
