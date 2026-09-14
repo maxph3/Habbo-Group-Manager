@@ -22,17 +22,17 @@ The interface dynamically adapts its control layout depending on the user's effe
 ### 1. Owner View
 Provides full administrative access, including global bulk actions (`Delete all members` and `Select all pending in group`), alongside standard batch management tools.
 
-
+![Owner View](screenshots/owner_view.png)
 
 ### 2. Admin View
 Grants standard management controls such as batch member removal, admin rights management, and pending request handling, while restricting destructive global commands.
 
-
+![Admin View](screenshots/admin_view.png)
 
 ### 3. Member View
 A clean, read-only layout restricted to browsing member information, viewing historical join dates, and navigating pagination without administrative overhead.
 
-
+![Member View](screenshots/member_view.png)
 
 ## Requirements
 
